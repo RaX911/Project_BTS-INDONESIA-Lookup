@@ -1,0 +1,184 @@
+<%- include('partials/header') %>
+<div class="container">
+  <h2 class="mb-4">Dokumentasi API</h2>
+
+  <div class="card">
+    <h3>Autentikasi</h3>
+    <p class="text-sm text-muted mt-2">Semua request API memerlukan API key. Kirim API key melalui header atau query parameter:</p>
+    <pre class="mt-2"><code># Via Header (Recommended)
+curl -H "X-API-Key: YOUR_API_KEY" https://your-domain/api/v1/msisdn/081234567890
+
+# Via Query Parameter
+curl "https://your-domain/api/v1/msisdn/081234567890?api_key=YOUR_API_KEY"</code></pre>
+  </div>
+
+  <div class="card mt-4">
+    <h3>1. MSISDN Lookup</h3>
+    <p class="text-sm"><span class="badge badge-green">GET</span> <code>/api/v1/msisdn/{msisdn}</code></p>
+    <p class="text-sm text-muted mt-2">Mendapatkan data Cell Tower, operator, IMEI, IMSI, ICCID, dan koordinat BTS berdasarkan nomor MSISDN.</p>
+    <h4 class="mt-2" style="font-size: 14px; color: #94a3b8;">Parameters:</h4>
+    <table class="mt-2">
+      <tr><td class="mono">msisdn</td><td>Nomor HP Indonesia (format: 08xx, 628xx, +628xx)</td></tr>
+    </table>
+    <h4 class="mt-2" style="font-size: 14px; color: #94a3b8;">Contoh Request:</h4>
+    <pre class="mt-2"><code>curl -H "X-API-Key: bts_xxxxx" /api/v1/msisdn/081234567890</code></pre>
+    <h4 class="mt-2" style="font-size: 14px; color: #94a3b8;">Contoh Response:</h4>
+    <pre class="mt-2"><code>{
+  "status": "success",
+  "data": {
+    "msisdn": "081234567890",
+    "msisdn_international": "+6281234567890",
+    "operator": {
+      "name": "PT Telekomunikasi Selular",
+      "brand": "Telkomsel",
+      "mcc": "510",
+      "mnc": "10",
+      "network_type": "GSM"
+    },
+    "device": {
+      "imei": "352456789012345",
+      "imsi": "510101234567890",
+      "iccid": "89621012345678901234"
+    },
+    "cell_tower": {
+      "cell_id": 34521,
+      "lac": 12345,
+      "mcc": "510",
+      "mnc": "10",
+      "signal_type": "4G",
+      "tower_height": 45,
+      "azimuth": 120
+    },
+    "location": {
+      "latitude": -6.2088,
+      "longitude": 106.8456,
+      "province": "DKI Jakarta",
+      "kabupaten": "Kota Jakarta Pusat",
+      "address": "Kota Jakarta Pusat, DKI Jakarta"
+    },
+    "timestamp": "2025-01-01T12:00:00.000Z"
+  }
+}</code></pre>
+  </div>
+
+  <div class="card mt-4">
+    <h3>2. Daftar BTS Towers</h3>
+    <p class="text-sm"><span class="badge badge-green">GET</span> <code>/api/v1/towers</code></p>
+    <p class="text-sm text-muted mt-2">Mendapatkan daftar BTS Cell Tower dengan filter.</p>
+    <table class="mt-2">
+      <thead><tr><th>Parameter</th><th>Tipe</th><th>Keterangan</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">province</td><td>string</td><td>Kode provinsi (contoh: 31 untuk DKI Jakarta)</td></tr>
+        <tr><td class="mono">kabupaten</td><td>string</td><td>Kode kabupaten/kota</td></tr>
+        <tr><td class="mono">mnc</td><td>string</td><td>Mobile Network Code (10=Telkomsel, 01=Indosat, 11=XL)</td></tr>
+        <tr><td class="mono">signal_type</td><td>string</td><td>2G, 3G, 4G, 5G</td></tr>
+        <tr><td class="mono">page</td><td>integer</td><td>Halaman (default: 1)</td></tr>
+        <tr><td class="mono">limit</td><td>integer</td><td>Jumlah per halaman (default: 50)</td></tr>
+      </tbody>
+    </table>
+    <pre class="mt-2"><code>curl -H "X-API-Key: bts_xxxxx" "/api/v1/towers?province=31&signal_type=4G&page=1&limit=10"</code></pre>
+  </div>
+
+  <div class="card mt-4">
+    <h3>3. Detail Tower</h3>
+    <p class="text-sm"><span class="badge badge-green">GET</span> <code>/api/v1/towers/{id}</code></p>
+    <p class="text-sm text-muted mt-2">Mendapatkan detail BTS Tower berdasarkan ID.</p>
+    <pre class="mt-2"><code>curl -H "X-API-Key: bts_xxxxx" /api/v1/towers/1</code></pre>
+  </div>
+
+  <div class="card mt-4">
+    <h3>4. Daftar Provinsi</h3>
+    <p class="text-sm"><span class="badge badge-green">GET</span> <code>/api/v1/regions/provinces</code></p>
+    <pre class="mt-2"><code>curl -H "X-API-Key: bts_xxxxx" /api/v1/regions/provinces</code></pre>
+  </div>
+
+  <div class="card mt-4">
+    <h3>5. Daftar Kabupaten/Kota</h3>
+    <p class="text-sm"><span class="badge badge-green">GET</span> <code>/api/v1/regions/kabupaten</code></p>
+    <table class="mt-2">
+      <tr><td class="mono">province_code</td><td>Filter berdasarkan kode provinsi (opsional)</td></tr>
+    </table>
+    <pre class="mt-2"><code>curl -H "X-API-Key: bts_xxxxx" "/api/v1/regions/kabupaten?province_code=32"</code></pre>
+  </div>
+
+  <div class="card mt-4">
+    <h3>6. Daftar Operator</h3>
+    <p class="text-sm"><span class="badge badge-green">GET</span> <code>/api/v1/operators</code></p>
+    <pre class="mt-2"><code>curl -H "X-API-Key: bts_xxxxx" /api/v1/operators</code></pre>
+  </div>
+
+  <div class="card mt-4">
+    <h3>7. Statistik</h3>
+    <p class="text-sm"><span class="badge badge-green">GET</span> <code>/api/v1/stats</code></p>
+    <pre class="mt-2"><code>curl -H "X-API-Key: bts_xxxxx" /api/v1/stats</code></pre>
+  </div>
+
+  <div class="card mt-4">
+    <h3>Error Codes</h3>
+    <table class="mt-2">
+      <thead><tr><th>Code</th><th>Keterangan</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge badge-red">400</span></td><td>Bad Request - Format MSISDN tidak valid</td></tr>
+        <tr><td><span class="badge badge-red">401</span></td><td>Unauthorized - API key tidak valid atau tidak ada</td></tr>
+        <tr><td><span class="badge badge-red">404</span></td><td>Not Found - Data tidak ditemukan</td></tr>
+        <tr><td><span class="badge badge-red">429</span></td><td>Too Many Requests - Limit harian tercapai</td></tr>
+        <tr><td><span class="badge badge-red">500</span></td><td>Internal Server Error</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card mt-4">
+    <h3>Contoh Penggunaan di CLI (Terminal)</h3>
+    <pre class="mt-2"><code># Test API Key
+curl -s -H "X-API-Key: YOUR_API_KEY" /api/v1/stats | python3 -m json.tool
+
+# MSISDN Lookup dari Terminal
+curl -s -H "X-API-Key: YOUR_API_KEY" /api/v1/msisdn/081234567890 | python3 -m json.tool
+
+# List Towers di Jakarta
+curl -s -H "X-API-Key: YOUR_API_KEY" "/api/v1/towers?province=31&limit=5" | python3 -m json.tool
+
+# Contoh Script Bash
+#!/bin/bash
+API_KEY="YOUR_API_KEY"
+BASE_URL="https://your-domain"
+MSISDN="081234567890"
+
+echo "Looking up MSISDN: $MSISDN"
+curl -s -H "X-API-Key: $API_KEY" "$BASE_URL/api/v1/msisdn/$MSISDN" | python3 -m json.tool</code></pre>
+  </div>
+
+  <div class="card mt-4">
+    <h3>Contoh Penggunaan di Python</h3>
+    <pre class="mt-2"><code>import requests
+
+API_KEY = "YOUR_API_KEY"
+BASE_URL = "https://your-domain"
+
+headers = {"X-API-Key": API_KEY}
+
+# MSISDN Lookup
+response = requests.get(f"{BASE_URL}/api/v1/msisdn/081234567890", headers=headers)
+data = response.json()
+print(data)
+
+# List Towers
+response = requests.get(f"{BASE_URL}/api/v1/towers?province=31", headers=headers)
+towers = response.json()
+print(f"Total towers: {towers['pagination']['total']}")</code></pre>
+  </div>
+
+  <div class="card mt-4">
+    <h3>Contoh Penggunaan di Node.js</h3>
+    <pre class="mt-2"><code>const API_KEY = "YOUR_API_KEY";
+const BASE_URL = "https://your-domain";
+
+// MSISDN Lookup
+fetch(`${BASE_URL}/api/v1/msisdn/081234567890`, {
+  headers: { "X-API-Key": API_KEY }
+})
+.then(res => res.json())
+.then(data => console.log(data));</code></pre>
+  </div>
+</div>
+<%- include('partials/footer') %>

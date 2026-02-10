@@ -1,0 +1,103 @@
+<%- include('partials/header') %>
+<div class="container">
+  <h2 class="mb-4">Database BTS Towers Indonesia</h2>
+
+  <div class="card">
+    <h3>Filter</h3>
+    <form method="GET" action="/towers" style="display: flex; gap: 12px; flex-wrap: wrap; align-items: end;" class="mt-2">
+      <div class="form-group" style="flex: 1; min-width: 200px; margin-bottom: 0;">
+        <label>Provinsi</label>
+        <select name="province">
+          <option value="">Semua Provinsi</option>
+          <% provinces.forEach(p => { %>
+            <option value="<%= p.code %>" <%= filters.province === p.code ? 'selected' : '' %>><%= p.name %></option>
+          <% }); %>
+        </select>
+      </div>
+      <div class="form-group" style="flex: 1; min-width: 150px; margin-bottom: 0;">
+        <label>Operator</label>
+        <select name="mnc">
+          <option value="">Semua Operator</option>
+          <% operators.forEach(op => { %>
+            <option value="<%= op.mnc %>" <%= filters.mnc === op.mnc ? 'selected' : '' %>><%= op.brand %></option>
+          <% }); %>
+        </select>
+      </div>
+      <div class="form-group" style="flex: 1; min-width: 120px; margin-bottom: 0;">
+        <label>Signal Type</label>
+        <select name="signal_type">
+          <option value="">Semua</option>
+          <option value="2G" <%= filters.signal_type === '2G' ? 'selected' : '' %>>2G</option>
+          <option value="3G" <%= filters.signal_type === '3G' ? 'selected' : '' %>>3G</option>
+          <option value="4G" <%= filters.signal_type === '4G' ? 'selected' : '' %>>4G</option>
+          <option value="5G" <%= filters.signal_type === '5G' ? 'selected' : '' %>>5G</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary" style="margin-bottom: 0;">Filter</button>
+      <a href="/towers" class="btn" style="background: #334155; color: #fff; margin-bottom: 0;">Reset</a>
+    </form>
+  </div>
+
+  <div class="card mt-4">
+    <div class="flex flex-between flex-center">
+      <h3>Hasil: <%= parseInt(pagination.total).toLocaleString() %> towers</h3>
+      <span class="text-sm text-muted">Halaman <%= pagination.page %> dari <%= pagination.totalPages %></span>
+    </div>
+
+    <div style="overflow-x: auto;" class="mt-2">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Cell ID</th>
+            <th>LAC</th>
+            <th>MCC</th>
+            <th>MNC</th>
+            <th>Signal</th>
+            <th>Latitude</th>
+            <th>Longitude</th>
+            <th>Provinsi</th>
+            <th>Kabupaten</th>
+            <th>Maps</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% towers.forEach(t => { %>
+          <tr>
+            <td><%= t.id %></td>
+            <td><strong><%= t.cell_id %></strong></td>
+            <td><%= t.lac %></td>
+            <td><%= t.mcc %></td>
+            <td><%= t.mnc %></td>
+            <td><span class="badge badge-green"><%= t.signal_type %></span></td>
+            <td><%= parseFloat(t.latitude).toFixed(6) %></td>
+            <td><%= parseFloat(t.longitude).toFixed(6) %></td>
+            <td><%= t.province_name || '-' %></td>
+            <td><%= t.kabupaten_name || '-' %></td>
+            <td><a href="https://www.google.com/maps?q=<%= t.latitude %>,<%= t.longitude %>" target="_blank" class="btn btn-sm btn-primary">Maps</a></td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <% if (pagination.page > 1) { %>
+        <a href="/towers?page=1&province=<%= filters.province || '' %>&mnc=<%= filters.mnc || '' %>&signal_type=<%= filters.signal_type || '' %>">&laquo;</a>
+        <a href="/towers?page=<%= pagination.page - 1 %>&province=<%= filters.province || '' %>&mnc=<%= filters.mnc || '' %>&signal_type=<%= filters.signal_type || '' %>">&lsaquo;</a>
+      <% } %>
+      <% for (let i = Math.max(1, pagination.page - 3); i <= Math.min(pagination.totalPages, pagination.page + 3); i++) { %>
+        <% if (i === pagination.page) { %>
+          <span class="current"><%= i %></span>
+        <% } else { %>
+          <a href="/towers?page=<%= i %>&province=<%= filters.province || '' %>&mnc=<%= filters.mnc || '' %>&signal_type=<%= filters.signal_type || '' %>"><%= i %></a>
+        <% } %>
+      <% } %>
+      <% if (pagination.page < pagination.totalPages) { %>
+        <a href="/towers?page=<%= pagination.page + 1 %>&province=<%= filters.province || '' %>&mnc=<%= filters.mnc || '' %>&signal_type=<%= filters.signal_type || '' %>">&rsaquo;</a>
+        <a href="/towers?page=<%= pagination.totalPages %>&province=<%= filters.province || '' %>&mnc=<%= filters.mnc || '' %>&signal_type=<%= filters.signal_type || '' %>">&raquo;</a>
+      <% } %>
+    </div>
+  </div>
+</div>
+<%- include('partials/footer') %>

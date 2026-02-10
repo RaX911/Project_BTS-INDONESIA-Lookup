@@ -1,0 +1,83 @@
+<%- include('partials/header') %>
+<div class="container">
+  <h2 class="mb-4">MSISDN Lookup</h2>
+
+  <div class="card">
+    <h3>Cek Nomor MSISDN</h3>
+    <form method="POST" action="/lookup" class="mt-2">
+      <div class="form-group">
+        <label>Masukkan Nomor MSISDN (HP Indonesia)</label>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" name="msisdn" placeholder="Contoh: 081234567890, 628123456789" required style="flex: 1;">
+          <button type="submit" class="btn btn-primary">Cek MSISDN</button>
+        </div>
+      </div>
+    </form>
+    <p class="text-sm text-muted">Format: 08xx, 628xx, +628xx. Semua operator Indonesia didukung.</p>
+  </div>
+
+  <% if (error) { %>
+    <div class="alert alert-error mt-4"><%= error %></div>
+  <% } %>
+
+  <% if (result) { %>
+  <div class="grid grid-2 mt-4">
+    <div class="card">
+      <h3>Informasi MSISDN</h3>
+      <table>
+        <tr><td class="text-muted">MSISDN</td><td><strong><%= result.msisdn %></strong></td></tr>
+        <tr><td class="text-muted">Format International</td><td><%= result.msisdn_international %></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Operator</h3>
+      <table>
+        <tr><td class="text-muted">Nama</td><td><strong><%= result.operator.brand %></strong></td></tr>
+        <tr><td class="text-muted">Company</td><td><%= result.operator.name %></td></tr>
+        <tr><td class="text-muted">MCC</td><td><%= result.operator.mcc %></td></tr>
+        <tr><td class="text-muted">MNC</td><td><%= result.operator.mnc %></td></tr>
+        <tr><td class="text-muted">Network</td><td><%= result.operator.network_type %></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Device Info</h3>
+      <table>
+        <tr><td class="text-muted">IMEI</td><td class="mono"><%= result.device.imei %></td></tr>
+        <tr><td class="text-muted">IMSI</td><td class="mono"><%= result.device.imsi %></td></tr>
+        <tr><td class="text-muted">ICCID</td><td class="mono"><%= result.device.iccid %></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Cell Tower BTS</h3>
+      <table>
+        <tr><td class="text-muted">Cell ID</td><td><strong><%= result.cell_tower.cell_id %></strong></td></tr>
+        <tr><td class="text-muted">LAC</td><td><%= result.cell_tower.lac %></td></tr>
+        <tr><td class="text-muted">MCC</td><td><%= result.cell_tower.mcc %></td></tr>
+        <tr><td class="text-muted">MNC</td><td><%= result.cell_tower.mnc %></td></tr>
+        <tr><td class="text-muted">Signal</td><td><span class="badge badge-green"><%= result.cell_tower.signal_type %></span></td></tr>
+        <tr><td class="text-muted">Tower Height</td><td><%= result.cell_tower.tower_height %>m</td></tr>
+        <tr><td class="text-muted">Azimuth</td><td><%= result.cell_tower.azimuth %>&deg;</td></tr>
+      </table>
+    </div>
+    <div class="card" style="grid-column: span 2;">
+      <h3>Lokasi BTS</h3>
+      <table>
+        <tr><td class="text-muted">Latitude</td><td><%= result.location.latitude %></td></tr>
+        <tr><td class="text-muted">Longitude</td><td><%= result.location.longitude %></td></tr>
+        <tr><td class="text-muted">Provinsi</td><td><%= result.location.province %></td></tr>
+        <tr><td class="text-muted">Kabupaten/Kota</td><td><%= result.location.kabupaten %></td></tr>
+        <tr><td class="text-muted">Alamat</td><td><%= result.location.address %></td></tr>
+      </table>
+      <div class="mt-2">
+        <a href="https://www.google.com/maps?q=<%= result.location.latitude %>,<%= result.location.longitude %>" target="_blank" class="btn btn-primary btn-sm">Lihat di Google Maps</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt-4">
+    <h3>Raw JSON Response</h3>
+    <pre><code><%= JSON.stringify(result, null, 2) %></code></pre>
+  </div>
+  <% } %>
+</div>
+<%- include('partials/footer') %>

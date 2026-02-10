@@ -1,0 +1,60 @@
+<%- include('partials/header') %>
+<div class="container">
+  <div style="text-align: center; padding: 60px 0;">
+    <h1 style="font-size: 36px; color: #f8fafc; margin-bottom: 16px;">BTS Indonesia Cell Tower API</h1>
+    <p style="font-size: 18px; color: #94a3b8; max-width: 600px; margin: 0 auto 32px;">
+      Database BTS Cell Tower seluruh Indonesia. Akses data Cell ID, LAC, MCC, MNC, koordinat, dan informasi operator melalui API.
+    </p>
+    <div style="display: flex; gap: 16px; justify-content: center;">
+      <a href="/register" class="btn btn-primary" style="padding: 12px 32px; font-size: 16px;">Daftar Gratis</a>
+      <a href="/docs" class="btn" style="padding: 12px 32px; font-size: 16px; background: #334155; color: #fff;">Dokumentasi API</a>
+    </div>
+  </div>
+
+  <div class="grid grid-3" style="margin-top: 40px;">
+    <div class="card" style="text-align: center;">
+      <h3 style="color: #60a5fa;">MSISDN Lookup</h3>
+      <p class="text-sm" style="color: #94a3b8;">Input nomor HP Indonesia, dapatkan data Cell Tower, operator, IMEI, IMSI, ICCID, dan koordinat lokasi BTS.</p>
+    </div>
+    <div class="card" style="text-align: center;">
+      <h3 style="color: #22c55e;">Seluruh Indonesia</h3>
+      <p class="text-sm" style="color: #94a3b8;">Database mencakup 38 provinsi, semua kabupaten/kota, dengan data BTS dari semua operator Indonesia.</p>
+    </div>
+    <div class="card" style="text-align: center;">
+      <h3 style="color: #f59e0b;">REST API</h3>
+      <p class="text-sm" style="color: #94a3b8;">API key valid dan aktif untuk integrasi ke program CLI, GUI, atau aplikasi lainnya. Dokumentasi lengkap tersedia.</p>
+    </div>
+  </div>
+
+  <div class="grid grid-4" style="margin-top: 40px;">
+    <div class="stat-card">
+      <div class="value">38</div>
+      <div class="label">Provinsi</div>
+    </div>
+    <div class="stat-card">
+      <div class="value">500+</div>
+      <div class="label">Kabupaten/Kota</div>
+    </div>
+    <div class="stat-card">
+      <div class="value">10,000+</div>
+      <div class="label">BTS Towers</div>
+    </div>
+    <div class="stat-card">
+      <div class="value">6+</div>
+      <div class="label">Operator</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 40px;">
+    <h3>Operator yang Didukung</h3>
+    <div class="grid grid-3 mt-2">
+      <div><span class="badge badge-green">Telkomsel</span> 0811, 0812, 0813, 0821, 0822, 0823, 0851, 0852, 0853</div>
+      <div><span class="badge badge-blue">Indosat Ooredoo</span> 0814, 0815, 0816, 0855, 0856, 0857, 0858</div>
+      <div><span class="badge badge-yellow">XL Axiata</span> 0817, 0818, 0819, 0859, 0877, 0878</div>
+      <div><span class="badge badge-purple">Tri (3)</span> 0895, 0896, 0897, 0898, 0899</div>
+      <div><span class="badge badge-red">Smartfren</span> 0881-0889</div>
+      <div><span class="badge badge-green">Axis</span> 0831, 0832, 0833, 0838</div>
+    </div>
+  </div>
+</div>
+<%- include('partials/footer') %>

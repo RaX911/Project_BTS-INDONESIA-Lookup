@@ -1,0 +1,118 @@
+<%- include('partials/header') %>
+<div class="container">
+  <h2 class="mb-4" style="color: #f59e0b;">Admin Panel</h2>
+
+  <div class="grid grid-4">
+    <div class="stat-card">
+      <div class="value"><%= parseInt(stats.towers).toLocaleString() %></div>
+      <div class="label">Total BTS Towers</div>
+    </div>
+    <div class="stat-card">
+      <div class="value"><%= stats.users %></div>
+      <div class="label">Total Users</div>
+    </div>
+    <div class="stat-card">
+      <div class="value"><%= stats.apiKeys %></div>
+      <div class="label">Total API Keys</div>
+    </div>
+    <div class="stat-card">
+      <div class="value"><%= stats.todayUsage %></div>
+      <div class="label">Request Hari Ini</div>
+    </div>
+  </div>
+
+  <div class="grid grid-2 mt-4">
+    <div class="card">
+      <h3>Distribusi Plan</h3>
+      <table class="mt-2">
+        <% stats.byPlan.forEach(p => { %>
+        <tr>
+          <td><span class="badge badge-blue"><%= p.plan.toUpperCase() %></span></td>
+          <td><%= p.count %> users</td>
+        </tr>
+        <% }); %>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Admin Actions</h3>
+      <form method="POST" action="/admin/reset-daily" class="mt-2">
+        <button type="submit" class="btn btn-warning" onclick="return confirm('Reset semua daily counter?')">Reset Daily Counter</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="card mt-4">
+    <h3>Manajemen User</h3>
+    <div style="overflow-x: auto;" class="mt-2">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Plan</th>
+            <th>Bergabung</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% users.forEach(u => { %>
+          <tr>
+            <td><%= u.id %></td>
+            <td><strong><%= u.username %></strong></td>
+            <td><%= u.email %></td>
+            <td><span class="badge <%= u.role === 'admin' ? 'badge-yellow' : 'badge-blue' %>"><%= u.role %></span></td>
+            <td>
+              <form method="POST" action="/admin/users/<%= u.id %>/plan" style="display: inline;">
+                <select name="plan" onchange="this.form.submit()" style="width: auto; padding: 2px 6px; font-size: 12px;">
+                  <option value="free" <%= u.plan === 'free' ? 'selected' : '' %>>Free</option>
+                  <option value="premium" <%= u.plan === 'premium' ? 'selected' : '' %>>Premium</option>
+                  <option value="vip" <%= u.plan === 'vip' ? 'selected' : '' %>>VIP</option>
+                  <option value="developer" <%= u.plan === 'developer' ? 'selected' : '' %>>Developer</option>
+                </select>
+              </form>
+            </td>
+            <td><%= new Date(u.created_at).toLocaleDateString('id-ID') %></td>
+            <td>
+              <form method="POST" action="/admin/users/<%= u.id %>/role" style="display: inline;">
+                <select name="role" onchange="this.form.submit()" style="width: auto; padding: 2px 6px; font-size: 12px;">
+                  <option value="user" <%= u.role === 'user' ? 'selected' : '' %>>User</option>
+                  <option value="admin" <%= u.role === 'admin' ? 'selected' : '' %>>Admin</option>
+                </select>
+              </form>
+              <form method="POST" action="/admin/users/<%= u.id %>/delete" style="display: inline; margin-left: 4px;">
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus user ini?')">Hapus</button>
+              </form>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card mt-4">
+    <h3>Log Penggunaan Terbaru</h3>
+    <div style="overflow-x: auto;" class="mt-2">
+      <table>
+        <thead>
+          <tr><th>Waktu</th><th>User</th><th>API Key</th><th>Endpoint</th><th>MSISDN</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <% recentLogs.forEach(log => { %>
+          <tr>
+            <td><%= new Date(log.created_at).toLocaleString('id-ID') %></td>
+            <td><%= log.username %></td>
+            <td><span class="mono"><%= log.key_name %></span></td>
+            <td><%= log.endpoint %></td>
+            <td><%= log.msisdn || '-' %></td>
+            <td><span class="badge <%= log.response_status === 200 ? 'badge-green' : 'badge-red' %>"><%= log.response_status %></span></td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<%- include('partials/footer') %>

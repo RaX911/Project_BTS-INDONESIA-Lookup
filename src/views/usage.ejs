@@ -1,0 +1,78 @@
+<%- include('partials/header') %>
+<div class="container">
+  <h2 class="mb-4">Data Usage</h2>
+
+  <div class="grid grid-3">
+    <div class="stat-card">
+      <div class="value"><%= user.plan.toUpperCase() %></div>
+      <div class="label">Plan Anda</div>
+    </div>
+    <div class="stat-card">
+      <% const dailyLimits = { free: 100, premium: 1000, vip: 10000, developer: 999999 }; %>
+      <div class="value"><%= dailyLimits[user.plan] || 100 %></div>
+      <div class="label">Limit Request/Hari</div>
+    </div>
+    <div class="stat-card">
+      <div class="value"><%= logs.length %></div>
+      <div class="label">Log Terakhir</div>
+    </div>
+  </div>
+
+  <% if (dailyStats.length > 0) { %>
+  <div class="card mt-4">
+    <h3>Statistik Harian (30 Hari Terakhir)</h3>
+    <table class="mt-2">
+      <thead><tr><th>Tanggal</th><th>Jumlah Request</th></tr></thead>
+      <tbody>
+        <% dailyStats.forEach(s => { %>
+        <tr>
+          <td><%= new Date(s.date).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></td>
+          <td><strong><%= s.count %></strong></td>
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
+
+  <div class="card mt-4">
+    <h3>Log Penggunaan API (100 Terakhir)</h3>
+    <% if (logs.length === 0) { %>
+      <p class="text-muted mt-2">Belum ada log penggunaan API.</p>
+    <% } else { %>
+    <div style="overflow-x: auto;" class="mt-2">
+      <table>
+        <thead>
+          <tr>
+            <th>Waktu</th>
+            <th>API Key</th>
+            <th>Endpoint</th>
+            <th>MSISDN</th>
+            <th>Status</th>
+            <th>IP</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% logs.forEach(log => { %>
+          <tr>
+            <td><%= new Date(log.created_at).toLocaleString('id-ID') %></td>
+            <td><span class="mono"><%= log.key_name %></span></td>
+            <td><%= log.endpoint %></td>
+            <td><%= log.msisdn || '-' %></td>
+            <td>
+              <% if (log.response_status === 200) { %>
+                <span class="badge badge-green"><%= log.response_status %></span>
+              <% } else { %>
+                <span class="badge badge-red"><%= log.response_status %></span>
+              <% } %>
+            </td>
+            <td><%= log.ip_address || '-' %></td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+    <% } %>
+  </div>
+</div>
+<%- include('partials/footer') %>

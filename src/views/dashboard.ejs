@@ -1,0 +1,127 @@
+<%- include('partials/header') %>
+<div class="container">
+  <div class="flex flex-between flex-center mb-4">
+    <h2>Dashboard</h2>
+    <div>
+      <span class="badge badge-blue"><%= user.plan.toUpperCase() %></span>
+      <span class="text-sm text-muted" style="margin-left: 8px;">Selamat datang, <strong><%= user.username %></strong></span>
+    </div>
+  </div>
+
+  <% const urlParams = new URLSearchParams(typeof require !== 'undefined' ? '' : ''); %>
+
+  <div class="grid grid-4">
+    <div class="stat-card">
+      <div class="value"><%= usage.today_requests || 0 %></div>
+      <div class="label">Request Hari Ini</div>
+    </div>
+    <div class="stat-card">
+      <div class="value"><%= usage.week_requests || 0 %></div>
+      <div class="label">Request 7 Hari</div>
+    </div>
+    <div class="stat-card">
+      <div class="value"><%= usage.total_requests || 0 %></div>
+      <div class="label">Total Request</div>
+    </div>
+    <div class="stat-card">
+      <div class="value"><%= apiKeys.length %></div>
+      <div class="label">API Keys</div>
+    </div>
+  </div>
+
+  <div class="grid grid-2 mt-4">
+    <div class="card">
+      <h3>Generate API Key</h3>
+      <form method="POST" action="/api-keys/generate" class="mt-2">
+        <div class="form-group">
+          <label>Nama API Key</label>
+          <input type="text" name="name" placeholder="Contoh: Mobile App, CLI Tool" value="Default">
+        </div>
+        <button type="submit" class="btn btn-primary">Generate API Key</button>
+      </form>
+      <p class="text-sm text-muted mt-2">
+        <% const limits = { free: 2, premium: 5, vip: 10, developer: 100 }; %>
+        Limit: <%= apiKeys.length %>/<%= limits[user.plan] || 2 %> API keys
+      </p>
+    </div>
+    <div class="card">
+      <h3>Info Akun</h3>
+      <table>
+        <tr><td class="text-muted">Username</td><td><%= user.username %></td></tr>
+        <tr><td class="text-muted">Email</td><td><%= user.email %></td></tr>
+        <tr><td class="text-muted">Plan</td><td><span class="badge badge-blue"><%= user.plan.toUpperCase() %></span></td></tr>
+        <tr><td class="text-muted">Role</td><td><%= user.role %></td></tr>
+        <tr><td class="text-muted">Bergabung</td><td><%= new Date(user.created_at).toLocaleDateString('id-ID') %></td></tr>
+        <tr><td class="text-muted">Total BTS</td><td><%= parseInt(stats.towers).toLocaleString() %> towers</td></tr>
+        <tr><td class="text-muted">Provinsi</td><td><%= stats.provinces %> provinsi</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card mt-4">
+    <h3>API Keys Anda</h3>
+    <% if (apiKeys.length === 0) { %>
+      <p class="text-muted mt-2">Belum ada API key. Klik "Generate API Key" untuk membuat.</p>
+    <% } else { %>
+      <table class="mt-2">
+        <thead>
+          <tr>
+            <th>Nama</th>
+            <th>API Key</th>
+            <th>Status</th>
+            <th>Request Hari Ini</th>
+            <th>Total Request</th>
+            <th>Terakhir Digunakan</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% apiKeys.forEach(key => { %>
+          <tr>
+            <td><%= key.name %></td>
+            <td><span class="api-key-display"><%= key.api_key %></span></td>
+            <td>
+              <% if (key.is_active) { %>
+                <span class="badge badge-green">Aktif</span>
+              <% } else { %>
+                <span class="badge badge-red">Nonaktif</span>
+              <% } %>
+            </td>
+            <td><%= key.requests_today %></td>
+            <td><%= key.requests_total %></td>
+            <td><%= key.last_used_at ? new Date(key.last_used_at).toLocaleString('id-ID') : '-' %></td>
+            <td>
+              <form method="POST" action="/api-keys/<%= key.id %>/toggle" style="display:inline;">
+                <button type="submit" class="btn btn-warning btn-sm"><%= key.is_active ? 'Nonaktifkan' : 'Aktifkan' %></button>
+              </form>
+              <form method="POST" action="/api-keys/<%= key.id %>/delete" style="display:inline; margin-left: 4px;">
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus API key ini?')">Hapus</button>
+              </form>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } %>
+  </div>
+
+  <div class="card mt-4">
+    <h3>Quick Start - Gunakan API</h3>
+    <p class="text-sm text-muted mb-4">Contoh penggunaan API dengan cURL:</p>
+    <pre><code># MSISDN Lookup
+curl -H "X-API-Key: YOUR_API_KEY" "<%= typeof process !== 'undefined' ? '' : '' %>/api/v1/msisdn/08123456789"
+
+# Daftar BTS Towers
+curl -H "X-API-Key: YOUR_API_KEY" "/api/v1/towers?province=31&limit=10"
+
+# Statistik
+curl -H "X-API-Key: YOUR_API_KEY" "/api/v1/stats"
+
+# Daftar Provinsi
+curl -H "X-API-Key: YOUR_API_KEY" "/api/v1/regions/provinces"
+
+# Daftar Operator
+curl -H "X-API-Key: YOUR_API_KEY" "/api/v1/operators"</code></pre>
+  </div>
+</div>
+<%- include('partials/footer') %>
